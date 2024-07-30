@@ -1,3 +1,4 @@
+import datetime
 from pathlib import Path
 
 import pandas as pd
@@ -15,3 +16,17 @@ def get_transactions_read_excel(file_path: str) -> list[dict]:
     except Exception as e:
         print(f"Ошибка {e}")
         return []
+
+
+def get_greeting() -> str:
+    """Функция выводит приветствие соответственно времени суток"""
+
+    current_time = datetime.datetime.now()
+    if 6 <= current_time.hour < 12:
+        return "Доброе утро!"
+    elif 12 <= current_time.hour < 18:
+        return "Добрый день!"
+    elif 18 <= current_time.hour < 23:
+        return "Добрый вечер!"
+    else:
+        return "Доброй ночи!"
