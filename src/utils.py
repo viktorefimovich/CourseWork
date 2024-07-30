@@ -3,7 +3,6 @@ from pathlib import Path
 
 import pandas as pd
 
-
 ROOTPATH = Path(__file__).resolve().parent.parent
 
 
@@ -36,3 +35,14 @@ def get_format_data(data_str: str) -> datetime:
     """Функция преобразует дату из строки в формат datetime"""
 
     return datetime.strptime(data_str, "%Y-%m-%d %H:%M:%S")
+
+
+def filter_by_date(transactions: list[dict], input_date: str) -> list[dict]:
+    """Функция выводит транзакции с начала месяца до заданной даты"""
+
+    input_date_temp = datetime.strptime(input_date, "%d.%m.%Y")
+    start_date = datetime(input_date_temp.year, input_date_temp.month, 1)
+
+    filter_transactions = [transaction for transaction in transactions if
+                           start_date <= get_format_data(transaction["Дата операции"]) <= input_date_temp]
+    return filter_transactions
