@@ -29,6 +29,7 @@ line_length = 119
 
 [tool.black]
 line-length = 119
+exclude = '.git'
 
 [tool.mypy]
 disallow_untyped_defs = true
