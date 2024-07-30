@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
@@ -30,3 +30,9 @@ def get_greeting() -> str:
         return "Добрый вечер!"
     else:
         return "Доброй ночи!"
+
+
+def get_format_data(data_str: str) -> datetime:
+    """Функция преобразует дату из строки в формат datetime"""
+
+    return datetime.strptime(data_str, "%Y-%m-%d %H:%M:%S")
