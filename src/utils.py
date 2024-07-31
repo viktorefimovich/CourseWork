@@ -38,7 +38,7 @@ def get_format_data(data_str: str) -> datetime:
 
 
 def filter_by_date(transactions: list[dict], input_date: str) -> list[dict]:
-    """Функция выводит транзакции с начала месяца до заданной даты"""
+    """Функция фильтрует транзакции с начала месяца до заданной даты"""
 
     input_date_temp = datetime.strptime(input_date, "%d.%m.%Y")
     start_date = datetime(input_date_temp.year, input_date_temp.month, 1)
