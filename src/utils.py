@@ -88,6 +88,8 @@ def filter_by_date(transactions: list[dict], input_date: str) -> list[dict]:
 
 
 def get_info_cards(transactions: list[dict]) -> list[dict]:
+    """Функция принимает список транзакций и выдает список с информацией по каждой карте"""
+
     list_card = {}
     list_info_card = []
     for transaction in transactions:
@@ -131,6 +133,7 @@ def get_info_cards(transactions: list[dict]) -> list[dict]:
 
 
 def get_rate(rate: str, date_transaction: str) -> dict:
+    """Функция принимает код валюты, дату и возвращает словарь с курсом валюты"""
     exchange_rate = {}
     url = f"https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={rate}&amount=1&date={date_transaction}"
     payload = {}
@@ -150,3 +153,20 @@ def get_rate(rate: str, date_transaction: str) -> dict:
 #     rate_str = "CNY"
 #     dict_exchange = get_rate(rate_str, in_date)
 #     print(dict_exchange)
+
+
+def get_exchange_rates(currencies: list[str]) -> list[dict]:
+    """Функция принимае список валюты и возвращает список курсов этих валют"""
+
+    exchange_rates = []
+    date_now = datetime.today()
+    date_now = date_now.strftime("%Y-%m-%d")
+    for currency in currencies:
+        exchange_rates.append(get_rate(currency, date_now))
+    return exchange_rates
+
+
+# if __name__ == "__main__":
+#     list_currency = ["USD", "EUR"]
+#     list_exchange = get_exchange_rates(list_currency)
+#     print(list_exchange)
