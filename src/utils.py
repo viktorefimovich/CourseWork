@@ -26,10 +26,17 @@ def get_transactions_read_excel(file_path: str) -> list[dict]:
         return []
 
 
+# if __name__ == "__main__":
+#     file_p = Path(ROOTPATH, "data/operations.xlsx")
+#     trans = get_transactions_read_excel(str(file_p))
+#     for tran in trans:
+#         print(tran)
+
+
 def get_greeting() -> str:
     """Функция выводит приветствие соответственно времени суток"""
 
-    current_time = datetime.datetime.now()
+    current_time = datetime.now()
     if 6 <= current_time.hour < 12:
         return "Доброе утро!"
     elif 12 <= current_time.hour < 18:
@@ -40,21 +47,44 @@ def get_greeting() -> str:
         return "Доброй ночи!"
 
 
-def get_format_data(data_str: str) -> datetime:
+# if __name__ == "__main__":
+#     date_now = get_greeting()
+#     print(date_now)
+
+
+def get_format_data(date_str: str) -> datetime:
     """Функция преобразует дату из строки в формат datetime"""
 
-    return datetime.strptime(data_str, "%Y-%m-%d %H:%M:%S")
+    return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+
+
+# if __name__ == "__main__":
+#     date_input = "1984-12-21 17:45:00"
+#     print(get_format_data(date_input))
+#     print(type(get_format_data(date_input)))
 
 
 def filter_by_date(transactions: list[dict], input_date: str) -> list[dict]:
     """Функция фильтрует транзакции с начала месяца до заданной даты"""
 
-    input_date_temp = datetime.strptime(input_date, "%d.%m.%Y")
+    input_date_temp = get_format_data(input_date)
     start_date = datetime(input_date_temp.year, input_date_temp.month, 1)
+    filter_transactions = []
+    for transaction in transactions:
+        date_transaction = datetime.strptime(transaction["Дата операции"], "%d.%m.%Y %H:%M:%S")
+        if start_date <= date_transaction <= input_date_temp:
+            filter_transactions.append(transaction)
 
-    filter_transactions = [transaction for transaction in transactions if
-                           start_date <= get_format_data(transaction["Дата операции"]) <= input_date_temp]
     return filter_transactions
+
+
+# if __name__ == "__main__":
+#     file_p = Path(ROOTPATH, "data/operations.xlsx")
+#     trans = get_transactions_read_excel(str(file_p))
+#     in_date = "2021-12-03 23:10:00"
+#     f_trans = filter_by_date(trans, in_date)
+#     for f_tran in f_trans:
+#         print(f_tran)
 
 
 def get_info_cards(transactions: list[dict]) -> list[dict]:
@@ -69,7 +99,8 @@ def get_info_cards(transactions: list[dict]) -> list[dict]:
             list_card[card_number] = {"total_spent": 0, "cashback": 0}
 
         if transaction.get("Валюта платежа") != "RUB":
-            date_transaction = datetime.strftime(get_format_data(transaction["Дата операции"]), "%Y-%m-%d")
+            date_transaction = datetime.strptime(transaction["Дата операции"], "%d.%m.%Y %H:%M:%S")
+            date_transaction = date_transaction.strftime("%Y-%m-%d")
             exchange_rate = get_rate(transaction.get("Валюта платежа"), date_transaction)
             amount = float(transaction.get("Сумма платежа")) * exchange_rate["rate"] / 100
         else:
@@ -89,13 +120,21 @@ def get_info_cards(transactions: list[dict]) -> list[dict]:
     return list_info_card
 
 
+# if __name__ == "__main__":
+#     file_p = Path(ROOTPATH, "data/operations.xlsx")
+#     trans = get_transactions_read_excel(str(file_p))
+#     in_date = "2021-12-01 23:59:59"
+#     f_trans = filter_by_date(trans, in_date)
+#     list_info = get_info_cards(f_trans)
+#     for tran in list_info:
+#         print(tran)
+
+
 def get_rate(rate: str, date_transaction: str) -> dict:
     exchange_rate = {}
     url = f"https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={rate}&amount=1&date={date_transaction}"
     payload = {}
-    headers = {
-        "apykey": apy_key
-    }
+    headers = {"apikey": apy_key}
     response = requests.request("get", url, headers=headers, data=payload)
     if response.status_code == 200:
         data = response.json()
@@ -105,3 +144,9 @@ def get_rate(rate: str, date_transaction: str) -> dict:
         print(f"Ошибка: {response.status_code}, {response.text} !")
         exchange_rate = {"currency": rate, "rate": None}
     return exchange_rate
+
+# if __name__ == "__main__":
+#     in_date = "2024-07-31"
+#     rate_str = "CNY"
+#     dict_exchange = get_rate(rate_str, in_date)
+#     print(dict_exchange)
