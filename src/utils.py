@@ -13,6 +13,7 @@ env_path = ROOTPATH / ".env"
 load_dotenv(env_path)
 
 apy_key = os.getenv("apikey")
+apikey = os.getenv("API_key")
 
 
 def get_transactions_read_excel(file_path: str) -> list[dict]:
@@ -148,6 +149,7 @@ def get_rate(rate: str, date_transaction: str) -> dict:
         exchange_rate = {"currency": rate, "rate": None}
     return exchange_rate
 
+
 # if __name__ == "__main__":
 #     in_date = "2024-07-31"
 #     rate_str = "CNY"
@@ -170,3 +172,38 @@ def get_exchange_rates(currencies: list[str]) -> list[dict]:
 #     list_currency = ["USD", "EUR"]
 #     list_exchange = get_exchange_rates(list_currency)
 #     print(list_exchange)
+
+
+def get_stocks_cost(companies: list[str]) -> list[dict]:
+    """
+    Функция принимает список тикеров компаний из индекса S&P500 и
+    возвращает список словарей со стоимостью акций этих компаний
+    """
+
+    stocks_cost = []
+    for company in companies:
+        url = (f'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&'
+               f'symbol={company}&interval=5min&apikey={apikey}')
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            time_series = data.get("Time Series (5min)")
+            if time_series:
+                last_date = max(time_series.keys())
+                last_data = time_series[last_date]
+                stock_cost = last_data["4. close"]
+                stocks_cost.append({"stock": company, "price": stock_cost})
+            else:
+                stocks_cost.append({"stock": company, "price": None})
+        else:
+            print(f"Ошибка: {response.status_code}, {response.text} !")
+            stocks_cost.append({"stock": company, "price": None})
+    return stocks_cost
+
+
+# if __name__ == "__main__":
+#     list_companies = ["AAPL", "AMZN", "GOOGL", "MSFT", "TSLA"]
+#     list_stocks_cost = get_stocks_cost(list_companies)
+#     for stock_company in list_stocks_cost:
+#         print(stock_company)
+
