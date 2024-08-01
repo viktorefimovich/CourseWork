@@ -207,3 +207,30 @@ def get_stocks_cost(companies: list[str]) -> list[dict]:
 #     for stock_company in list_stocks_cost:
 #         print(stock_company)
 
+
+def get_top_transactions(transactions: list[dict]) -> list[dict]:
+    """Функция принимает список транзакций и выдает топ 5 транзакций по сумме платежа"""
+
+    sorted_transactions = sorted(transactions, key=lambda x: abs(float(x["Сумма платежа"])), reverse=True)
+    top_transactions = []
+    for transaction in sorted_transactions[:5]:
+        date_transaction = datetime.strptime(transaction["Дата операции"], "%d.%m.%Y %H:%M:%S").date()
+        top_transactions.append(
+            {
+                "date": date_transaction,
+                "amount": transaction["Сумма платежа"],
+                "category": transaction["Категория"],
+                "description": transaction["Описание"]
+            }
+        )
+    return top_transactions
+
+
+# if __name__ == "__main__":
+#     file_p = Path(ROOTPATH, "data/operations.xlsx")
+#     trans = get_transactions_read_excel(str(file_p))
+#     in_date = "2021-12-02 23:59:59"
+#     f_trans = filter_by_date(trans, in_date)
+#     top_tr = get_top_transactions(f_trans)
+#     for tran in top_tr:
+#         print(tran)
