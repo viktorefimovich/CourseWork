@@ -12,8 +12,8 @@ ROOTPATH = Path(__file__).resolve().parent.parent
 env_path = ROOTPATH / ".env"
 load_dotenv(env_path)
 
-apy_key = os.getenv("apikey")
-apikey = os.getenv("API_key")
+apy_key = os.getenv("APIKEY")
+apikey = os.getenv("API_KEY")
 
 
 def get_transactions_read_excel(file_path: str) -> list[dict]:
@@ -94,7 +94,7 @@ def get_info_cards(transactions: list[dict]) -> list[dict]:
     list_card = {}
     list_info_card = []
     for transaction in transactions:
-        if not transaction.get("Номер карты"):
+        if not transaction.get("Номер карты") or str(transaction.get("Номер карты")).strip().lower() == "nan":
             continue
 
         card_number = transaction.get("Номер карты")[-4:]
@@ -126,7 +126,7 @@ def get_info_cards(transactions: list[dict]) -> list[dict]:
 # if __name__ == "__main__":
 #     file_p = Path(ROOTPATH, "data/operations.xlsx")
 #     trans = get_transactions_read_excel(str(file_p))
-#     in_date = "2021-12-01 23:59:59"
+#     in_date = "2021-12-31 23:59:59"
 #     f_trans = filter_by_date(trans, in_date)
 #     list_info = get_info_cards(f_trans)
 #     for tran in list_info:
@@ -182,12 +182,12 @@ def get_stocks_cost(companies: list[str]) -> list[dict]:
 
     stocks_cost = []
     for company in companies:
-        url = (f'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&'
+        url = (f'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&'
                f'symbol={company}&interval=5min&apikey={apikey}')
         response = requests.get(url)
         if response.status_code == 200:
             data = response.json()
-            time_series = data.get("Time Series (5min)")
+            time_series = data.get("Time Series (Daily)")
             if time_series:
                 last_date = max(time_series.keys())
                 last_data = time_series[last_date]
@@ -201,11 +201,11 @@ def get_stocks_cost(companies: list[str]) -> list[dict]:
     return stocks_cost
 
 
-# if __name__ == "__main__":
-#     list_companies = ["AAPL", "AMZN", "GOOGL", "MSFT", "TSLA"]
-#     list_stocks_cost = get_stocks_cost(list_companies)
-#     for stock_company in list_stocks_cost:
-#         print(stock_company)
+if __name__ == "__main__":
+    list_companies = ["AAPL", "AMZN", "GOOGL", "MSFT", "TSLA"]
+    list_stocks_cost = get_stocks_cost(list_companies)
+    for stock_company in list_stocks_cost:
+        print(stock_company)
 
 
 def get_top_transactions(transactions: list[dict]) -> list[dict]:
@@ -214,7 +214,7 @@ def get_top_transactions(transactions: list[dict]) -> list[dict]:
     sorted_transactions = sorted(transactions, key=lambda x: abs(float(x["Сумма платежа"])), reverse=True)
     top_transactions = []
     for transaction in sorted_transactions[:5]:
-        date_transaction = datetime.strptime(transaction["Дата операции"], "%d.%m.%Y %H:%M:%S").date()
+        date_transaction = str(datetime.strptime(transaction["Дата операции"], "%d.%m.%Y %H:%M:%S").date())
         top_transactions.append(
             {
                 "date": date_transaction,
