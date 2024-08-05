@@ -19,7 +19,7 @@ with open(user_set_file, "r") as file:
     user_settings = json.load(file)
 file_path = str(ROOTPATH / "data/operations.xlsx")
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("views")
 file_handler = logging.FileHandler(Path(ROOTPATH, "logs/views.log"), "w")
 file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 file_handler.setFormatter(file_formatter)
