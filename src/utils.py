@@ -201,11 +201,11 @@ def get_stocks_cost(companies: list[str]) -> list[dict]:
     return stocks_cost
 
 
-if __name__ == "__main__":
-    list_companies = ["AAPL", "AMZN", "GOOGL", "MSFT", "TSLA"]
-    list_stocks_cost = get_stocks_cost(list_companies)
-    for stock_company in list_stocks_cost:
-        print(stock_company)
+# if __name__ == "__main__":
+#     list_companies = ["AAPL", "AMZN", "GOOGL", "MSFT", "TSLA"]
+#     list_stocks_cost = get_stocks_cost(list_companies)
+#     for stock_company in list_stocks_cost:
+#         print(stock_company)
 
 
 def get_top_transactions(transactions: list[dict]) -> list[dict]:
