@@ -1,9 +1,10 @@
 import os
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List
 
-import requests
 import pandas as pd
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -88,7 +89,7 @@ def filter_by_date(transactions: list[dict], input_date: str) -> list[dict]:
 #         print(f_tran)
 
 
-def get_info_cards(transactions: list[dict]) -> list[dict]:
+def get_info_cards(transactions: List[dict]) -> List[dict]:
     """Функция принимает список транзакций и выдает список с информацией по каждой карте"""
 
     list_card = {}
@@ -97,17 +98,17 @@ def get_info_cards(transactions: list[dict]) -> list[dict]:
         if not transaction.get("Номер карты") or str(transaction.get("Номер карты")).strip().lower() == "nan":
             continue
 
-        card_number = transaction.get("Номер карты")[-4:]
+        card_number = str(transaction.get("Номер карты"))[-4:]
         if card_number not in list_card:
             list_card[card_number] = {"total_spent": 0, "cashback": 0}
 
         if transaction.get("Валюта платежа") != "RUB":
-            date_transaction = datetime.strptime(transaction["Дата операции"], "%d.%m.%Y %H:%M:%S")
-            date_transaction = date_transaction.strftime("%Y-%m-%d")
-            exchange_rate = get_rate(transaction.get("Валюта платежа"), date_transaction)
-            amount = float(transaction.get("Сумма платежа")) * exchange_rate["rate"] / 100
+            date_transaction_str = datetime.strptime(transaction["Дата операции"], "%d.%m.%Y %H:%M:%S")
+            date_transaction = date_transaction_str.strftime("%Y-%m-%d")
+            exchange_rate = get_rate(str(transaction.get("Валюта платежа")), date_transaction)
+            amount = float(str(transaction.get("Сумма платежа"))) * exchange_rate["rate"] / 100
         else:
-            amount = float(transaction.get("Сумма платежа"))
+            amount = float(str(transaction.get("Сумма платежа")))
 
         if amount < 0:
             list_card[card_number]["total_spent"] += abs(amount)
@@ -117,7 +118,7 @@ def get_info_cards(transactions: list[dict]) -> list[dict]:
             {
                 "last_digits": last_digits,
                 "total_spent": round(data["total_spent"], 2),
-                "cashback": round(data["cashback"], 2)
+                "cashback": round(data["cashback"], 2),
             }
         )
     return list_info_card
@@ -133,11 +134,12 @@ def get_info_cards(transactions: list[dict]) -> list[dict]:
 #         print(tran)
 
 
-def get_rate(rate: str, date_transaction: str) -> dict:
+def get_rate(rate: str, date_transaction: Any) -> Dict:
     """Функция принимает код валюты, дату и возвращает словарь с курсом валюты"""
+
     exchange_rate = {}
     url = f"https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={rate}&amount=1&date={date_transaction}"
-    payload = {}
+    payload: dict[Any, Any] = {}
     headers = {"apikey": apy_key}
     response = requests.request("get", url, headers=headers, data=payload)
     if response.status_code == 200:
@@ -146,7 +148,7 @@ def get_rate(rate: str, date_transaction: str) -> dict:
         exchange_rate["rate"] = data["info"]["rate"]
     else:
         print(f"Ошибка: {response.status_code}, {response.text} !")
-        exchange_rate = {"currency": rate, "rate": None}
+        exchange_rate = {"currency": rate, "rate": ""}
     return exchange_rate
 
 
@@ -161,8 +163,8 @@ def get_exchange_rates(currencies: list[str]) -> list[dict]:
     """Функция принимае список валюты и возвращает список курсов этих валют"""
 
     exchange_rates = []
-    date_now = datetime.today()
-    date_now = date_now.strftime("%Y-%m-%d")
+    date_now_datetime = datetime.today()
+    date_now = date_now_datetime.strftime("%Y-%m-%d")
     for currency in currencies:
         exchange_rates.append(get_rate(currency, date_now))
     return exchange_rates
@@ -182,8 +184,10 @@ def get_stocks_cost(companies: list[str]) -> list[dict]:
 
     stocks_cost = []
     for company in companies:
-        url = (f'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&'
-               f'symbol={company}&interval=5min&apikey={apikey}')
+        url = (
+            f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&"
+            f"symbol={company}&interval=5min&apikey={apikey}"
+        )
         response = requests.get(url)
         if response.status_code == 200:
             data = response.json()
@@ -220,7 +224,7 @@ def get_top_transactions(transactions: list[dict]) -> list[dict]:
                 "date": date_transaction,
                 "amount": transaction["Сумма платежа"],
                 "category": transaction["Категория"],
-                "description": transaction["Описание"]
+                "description": transaction["Описание"],
             }
         )
     return top_transactions
