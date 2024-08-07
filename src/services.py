@@ -23,8 +23,8 @@ def investment_bank(filtered_month: str, transactions_list: List[Dict[str, Any]]
     for transaction in transactions_list:
         transaction_date = datetime.strptime(str(transaction.get("Дата операции")), "%d.%m.%Y %H:%M:%S")
         if transaction_date.strftime("%Y-%m") == filtered_month:
-            if float(str(transaction.get("Сумма операции"))) < 0:
-                total_amount += limit - float(str(transaction.get("Сумма операции"))) % limit
+            if float(str(transaction.get("Сумма платежа"))) < 0:
+                total_amount += limit - float(str(transaction.get("Сумма платежа"))) % limit
     logger.info("Возвращается сумма Инвесткопилки")
     return total_amount
 
