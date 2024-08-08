@@ -1,5 +1,5 @@
+import functools
 import os
-from functools import wraps
 from pathlib import Path
 from typing import Callable
 
@@ -16,13 +16,12 @@ def to_excel(file_name: str = "result_{func}.xls") -> Callable:
     """
 
     def wrapper(func: Callable) -> Callable:
-        @wraps(func)
+        @functools.wraps(func)
         def inner(*args: tuple, **kwargs: dict) -> pd.DataFrame:
-
             result: pd.DataFrame = func(*args, **kwargs)
 
             result.to_excel(
-                 f"{os.path.join(ROOTPATH, file_name.format(func=func.__name__))}", index=False, engine="openpyxl"
+                f"{os.path.join(ROOTPATH, file_name.format(func=func.__name__))}", index=False, engine="openpyxl"
             )
 
             return result
@@ -30,7 +29,6 @@ def to_excel(file_name: str = "result_{func}.xls") -> Callable:
         return inner
 
     return wrapper
-
 
 # def my_decorator(file_name: str = f"report_function.txt"):
 #     def wrapper(func):
