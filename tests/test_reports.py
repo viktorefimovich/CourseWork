@@ -8,4 +8,4 @@ def test_spending_by_category(dataframe_dat_cat):
         {"Дата операции": Timestamp("2000-01-01 00:00:00"), "Категория": "Топливо"},
         {"Дата операции": Timestamp("2000-01-04 00:00:00"), "Категория": "Топливо"},
     ]
-    assert spending_by_category(dataframe_dat_cat, "Топливо").to_dict("records") == []
+    assert spending_by_category(dataframe_dat_cat, "Топливо").to_dict(orient="records") == []
