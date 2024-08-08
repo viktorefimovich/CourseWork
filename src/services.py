@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 
-from utils import get_transactions_read_excel
+# from utils import get_transactions_read_excel
 
 ROOTPATH = Path(__file__).resolve().parent.parent
 
@@ -29,10 +29,10 @@ def investment_bank(filtered_month: str, transactions_list: List[Dict[str, Any]]
     return total_amount
 
 
-if __name__ == "__main__":
-    input_month = input("Введите месяц и год в формате 'YYYY-MM': ")
-    file_p = Path(ROOTPATH, "data/operations.xlsx")
-    transactions = get_transactions_read_excel(str(file_p))
-    round_limit = int(input("Введите предел округления: "))
-    result = investment_bank(input_month, transactions, round_limit)
-    print(f"Сумма, которую удалось бы отложить в 'Инвесткопилку' за {input_month} равняется: {result}")
+# if __name__ == "__main__":
+#     input_month = input("Введите месяц и год в формате 'YYYY-MM': ")
+#     file_p = Path(ROOTPATH, "data/operations.xlsx")
+#     transactions = get_transactions_read_excel(str(file_p))
+#     round_limit = int(input("Введите предел округления: "))
+#     result = investment_bank(input_month, transactions, round_limit)
+#     print(f"Сумма, которую удалось бы отложить в 'Инвесткопилку' за {input_month} равняется: {result}")
