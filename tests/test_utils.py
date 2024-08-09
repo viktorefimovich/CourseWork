@@ -1,14 +1,14 @@
 import json
 from datetime import datetime
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
 import requests
 
-from src.utils import get_transactions_read_excel, get_greeting, get_format_data, filter_by_date, get_info_cards, \
-    get_rate, get_exchange_rates, get_stocks_cost, get_top_transactions
+from src.utils import (filter_by_date, get_exchange_rates, get_format_data, get_greeting, get_info_cards, get_rate,
+                       get_stocks_cost, get_top_transactions, get_transactions_read_excel)
 
 ROOTPATH = Path(__file__).resolve().parent.parent
 
@@ -19,14 +19,14 @@ def test_get_transactions_read_excel():
             "Дата операции": "01.06.2023 12:00:00",
             "Сумма операции": "-100.50",
             "Категория": "Покупки",
-            "Описание": "Магазин"
+            "Описание": "Магазин",
         },
         {
             "Дата операции": "15.06.2023 18:30:00",
             "Сумма операции": "-250.00",
             "Категория": "Ресторан",
-            "Описание": "Ужин"
-        }
+            "Описание": "Ужин",
+        },
     ]
 
     file_path_test = str(ROOTPATH / "data/operations.xlsx")
@@ -41,12 +41,7 @@ def test_get_transactions_read_excel():
 @patch("src.utils.datetime")
 @pytest.mark.parametrize(
     "current_hour, expected_greeting",
-    [
-        (7, "Доброе утро!"),
-        (13, "Добрый день!"),
-        (19, "Добрый вечер!"),
-        (2, "Доброй ночи!")
-    ]
+    [(7, "Доброе утро!"), (13, "Добрый день!"), (19, "Добрый вечер!"), (2, "Доброй ночи!")],
 )
 def test_get_greeting(mock_datetime: MagicMock, current_hour: int, expected_greeting: str) -> None:
     mock_now = datetime(2023, 6, 20, current_hour, 0, 0)
@@ -73,21 +68,21 @@ def test_get_format_data():
                     "Дата операции": "01.06.2023 12:00:00",
                     "Сумма платежа": "-100.50",
                     "Категория": "Покупки",
-                    "Описание": "Магазин"
+                    "Описание": "Магазин",
                 },
                 {
                     "Дата операции": "15.06.2023 18:30:00",
                     "Сумма платежа": "-250.00",
                     "Категория": "Ресторан",
-                    "Описание": "Ужин"
+                    "Описание": "Ужин",
                 },
                 {
                     "Дата операции": "20.06.2023 10:00:00",
                     "Сумма платежа": "-75.00",
                     "Категория": "Транспорт",
-                    "Описание": "Такси"
-                }
-            ]
+                    "Описание": "Такси",
+                },
+            ],
         ),
         (
             "2023-05-15 12:00:00",
@@ -96,11 +91,11 @@ def test_get_format_data():
                     "Дата операции": "05.05.2023 08:15:00",
                     "Сумма платежа": "-500.00",
                     "Категория": "Медицина",
-                    "Описание": "Аптека"
+                    "Описание": "Аптека",
                 }
-            ]
-        )
-    ]
+            ],
+        ),
+    ],
 )
 def test_filter_by_date(test_transactions, input_date, expected_result):
     result = filter_by_date(test_transactions, input_date)
@@ -113,33 +108,25 @@ def test_get_info_cards():
             "Номер карты": "*1234",
             "Дата операции": "01.01.2024 12:00:00",
             "Сумма платежа": "-100",
-            "Валюта платежа": "RUB"
+            "Валюта платежа": "RUB",
         },
         {
             "Номер карты": "*1234",
             "Дата операции": "05.01.2024 12:00:00",
             "Сумма платежа": "-200",
-            "Валюта платежа": "RUB"
+            "Валюта платежа": "RUB",
         },
         {
             "Номер карты": "*1235",
             "Дата операции": "01.01.2024 12:00:00",
             "Сумма платежа": "-100",
-            "Валюта платежа": "RUB"
-        }
+            "Валюта платежа": "RUB",
+        },
     ]
     result = get_info_cards(test_data)
     assert result == [
-        {
-            "last_digits": "1234",
-            "total_spent": 300,
-            "cashback": 3
-        },
-        {
-            "last_digits": "1235",
-            "total_spent": 100,
-            "cashback": 1
-        }
+        {"last_digits": "1234", "total_spent": 300, "cashback": 3},
+        {"last_digits": "1235", "total_spent": 100, "cashback": 1},
     ]
 
 
@@ -160,14 +147,11 @@ def test_get_rate(mock_request):
     assert result == expected_result
 
 
-@patch('requests.request')
+@patch("requests.request")
 def test_get_exchange_rates_success(mock_request):
 
     currencies = ["USD", "EUR"]
-    expected_results = [
-         {"currency": "USD", "rate": 70.0},
-         {"currency": "EUR", "rate": 80.0}
-    ]
+    expected_results = [{"currency": "USD", "rate": 70.0}, {"currency": "EUR", "rate": 80.0}]
 
     response_usd = json.loads('{"info":{"rate":70.0}}')
     response_eur = json.loads('{"info":{"rate":80.0}}')
@@ -186,13 +170,10 @@ def test_get_exchange_rates_success(mock_request):
     assert result == expected_results
 
 
-@patch('requests.get')
+@patch("requests.get")
 def test_get_stocks_cost_success(mock_get):
     companies = ["AAPL", "MSFT"]
-    expected_results = [
-        {"stock": "AAPL", "price": 100.0},
-        {"stock": "MSFT", "price": 50.0}
-    ]
+    expected_results = [{"stock": "AAPL", "price": 100.0}, {"stock": "MSFT", "price": 50.0}]
 
     response_aapl = json.loads('{"Time Series (Daily)":{"2024-01-01": {"4. close": 100.0}}}')
     response_msft = json.loads('{"Time Series (Daily)":{"2024-01-01": {"4. close": 50.0}}}')
@@ -217,40 +198,25 @@ def test_get_top_transactions():
             "Дата операции": "01.06.2023 12:00:00",
             "Сумма платежа": "-100.50",
             "Категория": "Покупки",
-            "Описание": "Магазин"
+            "Описание": "Магазин",
         },
         {
             "Дата операции": "15.06.2023 18:30:00",
             "Сумма платежа": "-250.00",
             "Категория": "Ресторан",
-            "Описание": "Ужин"
+            "Описание": "Ужин",
         },
         {
             "Дата операции": "20.06.2023 10:00:00",
             "Сумма платежа": "-75.00",
             "Категория": "Транспорт",
-            "Описание": "Такси"
-        }
+            "Описание": "Такси",
+        },
     ]
     expected_result = [
-        {
-            "date": "2023-06-15",
-            "amount": "-250.00",
-            "category": "Ресторан",
-            "description": "Ужин"
-        },
-        {
-            "date": "2023-06-01",
-            "amount": "-100.50",
-            "category": "Покупки",
-            "description": "Магазин"
-        },
-        {
-            "date": "2023-06-20",
-            "amount": "-75.00",
-            "category": "Транспорт",
-            "description": "Такси"
-        }
+        {"date": "2023-06-15", "amount": "-250.00", "category": "Ресторан", "description": "Ужин"},
+        {"date": "2023-06-01", "amount": "-100.50", "category": "Покупки", "description": "Магазин"},
+        {"date": "2023-06-20", "amount": "-75.00", "category": "Транспорт", "description": "Такси"},
     ]
 
     result = get_top_transactions(test_tran)

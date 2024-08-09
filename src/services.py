@@ -24,7 +24,7 @@ def investment_bank(filtered_month: str, transactions_list: List[Dict[str, Any]]
         transaction_date = datetime.strptime(str(transaction.get("Дата операции")), "%d.%m.%Y %H:%M:%S")
         if transaction_date.strftime("%Y-%m") == filtered_month:
             if float(str(transaction.get("Сумма платежа"))) < 0:
-                remain = abs(float(transaction.get("Сумма платежа"))) % limit
+                remain = abs(float(str(transaction.get("Сумма платежа")))) % limit
                 if remain == 0:
                     continue
                 else:

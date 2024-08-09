@@ -2,9 +2,11 @@ import functools
 import os
 from pathlib import Path
 from typing import Callable
-from unittest.mock import patch
 
 import pandas as pd
+
+# from unittest.mock import patch
+
 
 ROOTPATH = Path(__file__).resolve().parent.parent
 
@@ -31,6 +33,7 @@ def to_excel(file_name: str = "result_{func}.xls") -> Callable:
 
     return wrapper
 
+
 # def my_decorator(file_name: str = f"report_function.txt"):
 #     def wrapper(func):
 #         def inner(*args, **kwargs):
@@ -41,5 +44,3 @@ def to_excel(file_name: str = "result_{func}.xls") -> Callable:
 #         return inner
 #
 #     return wrapper
-
-
