@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from utils import (
+from src.utils import (
     get_transactions_read_excel,
     filter_by_date, get_info_cards,
     get_top_transactions,
@@ -54,6 +54,6 @@ def home_page(input_date: str) -> Any:
     return json.dumps(data, ensure_ascii=False)
 
 
-if __name__ == "__main__":
-    in_date = input("Введите дату в формате 'YYYY-MM-DD HH:MM:SS': ")
-    print(home_page(in_date))
+# if __name__ == "__main__":
+#     in_date = input("Введите дату в формате 'YYYY-MM-DD HH:MM:SS': ")
+#     print(home_page(in_date))
