@@ -7,8 +7,17 @@ import pandas as pd
 import pytest
 import requests
 
-from src.utils import (filter_by_date, get_exchange_rates, get_format_data, get_greeting, get_info_cards, get_rate,
-                       get_stocks_cost, get_top_transactions, get_transactions_read_excel)
+from src.utils import (
+    filter_by_date,
+    get_exchange_rates,
+    get_format_data,
+    get_greeting,
+    get_info_cards,
+    get_rate,
+    get_stocks_cost,
+    get_top_transactions,
+    get_transactions_read_excel,
+)
 
 ROOTPATH = Path(__file__).resolve().parent.parent
 

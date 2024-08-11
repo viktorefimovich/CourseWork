@@ -1,23 +1,19 @@
 import json
-import pytest
 from unittest.mock import patch
+
+import pytest
+
 from src.views import home_page  # Импортируйте ваш модуль
 
 
 @pytest.fixture
 def mock_user_settings():
-    return {
-        "user_currencies": ["USD", "EUR"],
-        "user_stocks": ["AAPL", "GOOGL"]
-    }
+    return {"user_currencies": ["USD", "EUR"], "user_stocks": ["AAPL", "GOOGL"]}
 
 
 @pytest.fixture
 def mock_transactions():
-    return [
-        {"date": "2024-08-01", "amount": 100},
-        {"date": "2024-08-02", "amount": 150}
-    ]
+    return [{"date": "2024-08-01", "amount": 100}, {"date": "2024-08-02", "amount": 150}]
 
 
 @pytest.fixture
@@ -33,9 +29,18 @@ def mock_filtered_transactions(mock_transactions):
 @patch("src.views.get_transactions_read_excel")
 @patch("src.views.filter_by_date")
 @patch("src.views.user_settings", return_value={"user_currencies": ["USD", "EUR"], "user_stocks": ["AAPL", "GOOGL"]})
-def test_home_page(mock_greeting, mock_transactions_read_excel, mock_filter_by_date,
-                   mock_info_cards, mock_top_transactions, mock_exchange_rates,
-                   mock_stocks_cost, mock_user_settings, mock_transactions, mock_filtered_transactions):
+def test_home_page(
+    mock_greeting,
+    mock_transactions_read_excel,
+    mock_filter_by_date,
+    mock_info_cards,
+    mock_top_transactions,
+    mock_exchange_rates,
+    mock_stocks_cost,
+    mock_user_settings,
+    mock_transactions,
+    mock_filtered_transactions,
+):
     # Настройка mock-объектов
     mock_transactions_read_excel.return_value = mock_transactions
     mock_filter_by_date.return_value = mock_filtered_transactions
@@ -50,6 +55,6 @@ def test_home_page(mock_greeting, mock_transactions_read_excel, mock_filter_by_d
         "cards": [{"card": "Visa", "balance": 1000}],
         "top_transactions": [{"date": "2024-08-02", "amount": 150}],
         "currency_rates": {"USD": 1.0, "EUR": 0.9},
-        "stock_prices": {"AAPL": 150, "GOOGL": 2800}
+        "stock_prices": {"AAPL": 150, "GOOGL": 2800},
     }
     assert json.loads(response) == expected_data

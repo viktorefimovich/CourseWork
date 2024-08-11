@@ -3,8 +3,15 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from src.utils import (filter_by_date, get_exchange_rates, get_greeting, get_info_cards, get_stocks_cost,
-                       get_top_transactions, get_transactions_read_excel)
+from src.utils import (
+    filter_by_date,
+    get_exchange_rates,
+    get_greeting,
+    get_info_cards,
+    get_stocks_cost,
+    get_top_transactions,
+    get_transactions_read_excel,
+)
 
 ROOTPATH = Path(__file__).resolve().parent.parent
 
