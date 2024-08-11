@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from src.views import home_page  # Импортируйте ваш модуль
+from src.views import home_page
 
 
 @pytest.fixture
@@ -18,7 +18,7 @@ def mock_transactions():
 
 @pytest.fixture
 def mock_filtered_transactions(mock_transactions):
-    return mock_transactions  # В реальных тестах вы можете модифицировать это в зависимости от логики
+    return mock_transactions
 
 
 @patch("src.views.get_info_cards", return_value=[{"card": "Visa", "balance": 1000}])
@@ -41,15 +41,12 @@ def test_home_page(
     mock_transactions,
     mock_filtered_transactions,
 ):
-    # Настройка mock-объектов
     mock_transactions_read_excel.return_value = mock_transactions
     mock_filter_by_date.return_value = mock_filtered_transactions
 
-    # Вызов тестируемой функции
     input_date = "2024-08-02 12:00:00"
     response = home_page(input_date)
 
-    # Проверка результата
     expected_data = {
         "get_greeting": "Hello, User!",
         "cards": [{"card": "Visa", "balance": 1000}],
