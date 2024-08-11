@@ -3,14 +3,8 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from src.utils import (
-    get_transactions_read_excel,
-    filter_by_date, get_info_cards,
-    get_top_transactions,
-    get_exchange_rates,
-    get_stocks_cost,
-    get_greeting
-)
+from src.utils import (filter_by_date, get_exchange_rates, get_greeting, get_info_cards, get_stocks_cost,
+                       get_top_transactions, get_transactions_read_excel)
 
 ROOTPATH = Path(__file__).resolve().parent.parent
 
@@ -47,8 +41,13 @@ def home_page(input_date: str) -> Any:
     logger.info("Создается курс валют из списка юзера")
     stocks_cost = get_stocks_cost(user_settings["user_stocks"])
     logger.info("Создается список котировок акций и списка юзера")
-    data = {"get_greeting": greetings, "cards": cards_info, "top_transactions": top_transactions,
-            "currency_rates": exchange_rate, "stock_prices": stocks_cost}
+    data = {
+        "get_greeting": greetings,
+        "cards": cards_info,
+        "top_transactions": top_transactions,
+        "currency_rates": exchange_rate,
+        "stock_prices": stocks_cost,
+    }
     logger.info("Создается список для преобразования в json-строку")
     logger.info("Записывается json-строка")
     return json.dumps(data, ensure_ascii=False)
